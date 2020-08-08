@@ -5,30 +5,12 @@ ENV ANDROID_HOME="/opt/android-sdk" \
     FLUTTER_HOME="/opt/flutter" \
     JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/"
 
-ENV TZ=America/Los_Angeles
-
 # Get the latest version from https://developer.android.com/studio/index.html
 ENV ANDROID_SDK_TOOLS_VERSION="4333796"
 
 # Get the latest version from https://developer.android.com/ndk/downloads/index.html
 ENV ANDROID_NDK_VERSION="r21c"
 
-# nodejs version
-ENV NODE_VERSION="12.x"
-
-# Set locale
-ENV LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
-
-RUN apt-get clean && \
-    apt-get update -qq && \
-    apt-get install -qq -y apt-utils locales && \
-    locale-gen $LANG
-
-ENV DEBIAN_FRONTEND="noninteractive" \
-    TERM=dumb \
-    DEBIAN_FRONTEND=noninteractive
 
 # Variables must be references after they are created
 ENV ANDROID_SDK_HOME="$ANDROID_HOME"
@@ -39,71 +21,15 @@ ENV PATH="$JAVA_HOME/bin:$PATH:$ANDROID_SDK_HOME/emulator:$ANDROID_SDK_HOME/tool
 WORKDIR /tmp
 
 # Installing packages
-RUN apt-get update -qq > /dev/null && \
-    apt-get install -qq locales > /dev/null && \
-    locale-gen "$LANG" > /dev/null && \
-    apt-get install -qq --no-install-recommends \
-        autoconf \
-        build-essential \
-        curl \
-        file \
-        git \
-        gpg-agent \
-        less \
-        lib32stdc++6 \
-        lib32z1 \
-        lib32z1-dev \
-        lib32ncurses5 \
-        libc6-dev \
-        libgmp-dev \
-        libmpc-dev \
-        libmpfr-dev \
-        libxslt-dev \
-        libxml2-dev \
-        m4 \
-        ncurses-dev \
-        ocaml \
-        openjdk-8-jdk \
-        openjdk-11-jdk \
-        openssh-client \
-        pkg-config \
-        ruby-full \
-        software-properties-common \
-        tzdata \
-        unzip \
-        vim-tiny \
-        wget \
-        zip \
-        zlib1g-dev > /dev/null && \
-    echo "set timezone" && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    echo "nodejs, npm, cordova, ionic, react-native" && \
-    curl -sL -k https://deb.nodesource.com/setup_${NODE_VERSION} \
-        | bash - > /dev/null && \
-    apt-get install -qq nodejs > /dev/null && \
-    apt-get clean > /dev/null && \
-    curl -sS -k https://dl.yarnpkg.com/debian/pubkey.gpg \
-        | apt-key add - > /dev/null && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" \
-        | tee /etc/apt/sources.list.d/yarn.list > /dev/null && \
-    apt-get update -qq > /dev/null && \
-    apt-get install -qq yarn > /dev/null && \
-    rm -rf /var/lib/apt/lists/ && \
-    npm install --quiet -g npm > /dev/null && \
-    npm install --quiet -g \
-        bower \
-        cordova \
-        eslint \
-        gulp \
-        ionic \
-        jshint \
-        karma-cli \
-        mocha \
-        node-gyp \
-        npm-check-updates \
-        react-native-cli > /dev/null && \
-    npm cache clean --force > /dev/null && \
-    rm -rf /tmp/* /var/tmp/*
+RUN apt-get update && apt-get install -y wget git curl
+RUN apt-get update && apt-get install -y wget file
+RUN apt-get update && apt-get install -y wget mkdir
+RUN apt-get update && apt-get install -y wget unzip
+RUN apt-get update && apt-get install -y wget which
+RUN apt-get update && apt-get install -y wget zip
+RUN apt-get update && apt-get install -y wget xz-utils
+RUN apt-get update && apt-get install -y --no-install-recommends openjdk-7-jdk
+RUN apt-get update && apt-get install -y maven ant ruby rbenv make
 
 # Install Android SDK
 RUN echo "sdk tools ${ANDROID_SDK_TOOLS_VERSION}" && \
@@ -161,7 +87,7 @@ RUN echo "kotlin" && \
 
 RUN echo "Flutter sdk" && \
     cd /opt && \
-    wget --quiet https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.17.1-stable.tar.xz -O flutter.tar.xz && \
+    wget --quiet https://storage.flutter-io.cn/flutter_infra/releases/stable/linux/flutter_linux_1.20.1-stable.tar.xz -O flutter.tar.xz && \
     tar xf flutter.tar.xz && \
     flutter config --no-analytics && \
     rm -f flutter.tar.xz
@@ -177,21 +103,8 @@ RUN mkdir -p /var/lib/jenkins/workspace && \
     chmod 777 /var/lib/jenkins/workspace && \
     chmod 777 $ANDROID_HOME/.android
 
-# Install fastlane with bundler and Gemfile
-ENV BUNDLE_GEMFILE=/tmp/Gemfile
-
-COPY Gemfile /tmp/Gemfile
-
-RUN echo "fastlane" && \
-    gem install bundler --quiet --no-document > /dev/null && \
-    mkdir -p /.fastlane && \
-    chmod 777 /.fastlane && \
-    bundle install --quiet
-
 COPY README.md /README.md
 
-RUN apt-get update && apt-get install -y wget git curl
-RUN apt-get update && apt-get install -y --no-install-recommends openjdk-7-jdk
 RUN apt-get update && apt-get install -y maven ant ruby rbenv make
 RUN echo "1.554.3" > .lts-version-number
 RUN wget -q -O - http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key | sudo apt-key add -
