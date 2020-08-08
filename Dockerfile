@@ -24,7 +24,6 @@ WORKDIR /tmp
 RUN apt-get update && apt-get install -y wget git curl
 RUN apt-get update && apt-get install -y wget file
 RUN apt-get update && apt-get install -y wget unzip
-RUN apt-get update && apt-get install -y wget which
 RUN apt-get update && apt-get install -y wget zip
 RUN apt-get update && apt-get install -y wget xz-utils
 RUN apt-get update && apt-get install -y --no-install-recommends openjdk-8-jdk
