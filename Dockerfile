@@ -190,22 +190,24 @@ RUN echo "fastlane" && \
 
 COPY README.md /README.md
 
-ARG BUILD_DATE=""
-ARG SOURCE_BRANCH=""
-ARG SOURCE_COMMIT=""
-ARG DOCKER_TAG=""
+RUN apt-get update && apt-get install -y wget git curl
+RUN apt-get update && apt-get install -y --no-install-recommends openjdk-7-jdk
+RUN apt-get update && apt-get install -y maven ant ruby rbenv make
+RUN echo "1.554.3" > .lts-version-number
+RUN wget -q -O - http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key | sudo apt-key add -
+RUN echo deb http://pkg.jenkins-ci.org/debian-stable binary/ >> /etc/apt/sources.list
+RUN apt-get update && apt-get install -y jenkins
+RUN mkdir -p /var/jenkins_home && chown -R jenkins /var/jenkins_home
+ADD init.groovy /tmp/WEB-INF/init.groovy
+RUN apt-get install -y zip && cd /tmp && zip -g /usr/share/jenkins/jenkins.war WEB-INF/init.groovy
+USER jenkins
 
-ENV BUILD_DATE=${BUILD_DATE} \
-    SOURCE_BRANCH=${SOURCE_BRANCH} \
-    SOURCE_COMMIT=${SOURCE_COMMIT} \
-    DOCKER_TAG=${DOCKER_TAG}
+# VOLUME /var/jenkins_home - bind this in via -v if you want to make this persistent.
+ENV JENKINS_HOME /var/jenkins_home
 
-# labels, see http://label-schema.org/
-LABEL maintainer="Ming Chen"
-LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.name="mingc/android-build-box"
-LABEL org.label-schema.version="${DOCKER_TAG}"
-LABEL org.label-schema.usage="/README.md"
-LABEL org.label-schema.docker.cmd="docker run --rm -v `pwd`:/project mingc/android-build-box bash -c 'cd /project; ./gradlew build'"
-LABEL org.label-schema.build-date="${BUILD_DATE}"
-LABEL org.label-schema.vcs-ref="${SOURCE_COMMIT}@${SOURCE_BRANCH}"
+# for main web interface:
+EXPOSE 8080 
+
+# will be used by attached slave agents:
+EXPOSE 50000 
+CMD ["/usr/bin/java",  "-jar",  "/usr/share/jenkins/jenkins.war"]
