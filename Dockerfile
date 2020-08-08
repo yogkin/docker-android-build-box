@@ -105,7 +105,7 @@ COPY README.md /README.md
 
 RUN apt-get update && apt-get install -y maven ant ruby rbenv make
 RUN echo "1.554.3" > .lts-version-number
-RUN wget -q -O - http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key | sudo apt-key add -
+RUN wget -q -O - http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key | apt-key add -
 RUN echo deb http://pkg.jenkins-ci.org/debian-stable binary/ >> /etc/apt/sources.list
 RUN apt-get update && apt-get install -y jenkins
 RUN mkdir -p /var/jenkins_home && chown -R jenkins /var/jenkins_home
