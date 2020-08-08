@@ -1,4 +1,5 @@
-FROM ubuntu:18.04
+FROM jenkins/jenkins:lts
+USER root
 
 ENV ANDROID_HOME="/opt/android-sdk" \
     ANDROID_NDK="/opt/android-ndk" \
@@ -93,32 +94,3 @@ RUN echo "Flutter sdk" && \
 # Copy sdk license agreement files.
 RUN mkdir -p $ANDROID_HOME/licenses
 COPY sdk/licenses/* $ANDROID_HOME/licenses/
-
-# Create some jenkins required directory to allow this image run with Jenkins
-RUN mkdir -p /var/lib/jenkins/workspace && \
-    mkdir -p /home/jenkins && \
-    chmod 777 /home/jenkins && \
-    chmod 777 /var/lib/jenkins/workspace && \
-    chmod 777 $ANDROID_HOME/.android
-
-COPY README.md /README.md
-
-RUN apt-get update && apt-get install -y maven ant ruby rbenv make
-RUN echo "1.554.3" > .lts-version-number
-RUN wget -q -O - http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key | apt-key add -
-RUN echo deb http://pkg.jenkins-ci.org/debian-stable binary/ >> /etc/apt/sources.list
-RUN apt-get update && apt-get install -y jenkins
-RUN mkdir -p /var/jenkins_home && chown -R jenkins /var/jenkins_home
-ADD init.groovy /tmp/WEB-INF/init.groovy
-RUN apt-get install -y zip && cd /tmp && zip -g /usr/share/jenkins/jenkins.war WEB-INF/init.groovy
-USER jenkins
-
-# VOLUME /var/jenkins_home - bind this in via -v if you want to make this persistent.
-ENV JENKINS_HOME /var/jenkins_home
-
-# for main web interface:
-EXPOSE 8080 
-
-# will be used by attached slave agents:
-EXPOSE 50000 
-CMD ["/usr/bin/java",  "-jar",  "/usr/share/jenkins/jenkins.war"]
