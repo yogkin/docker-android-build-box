@@ -23,7 +23,6 @@ WORKDIR /tmp
 # Installing packages
 RUN apt-get update && apt-get install -y wget git curl
 RUN apt-get update && apt-get install -y wget file
-RUN apt-get update && apt-get install -y wget mkdir
 RUN apt-get update && apt-get install -y wget unzip
 RUN apt-get update && apt-get install -y wget which
 RUN apt-get update && apt-get install -y wget zip
