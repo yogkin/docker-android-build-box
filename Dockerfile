@@ -23,7 +23,6 @@ WORKDIR /tmp
 
 # Installing packages
 RUN apt-get install -y wget git curl
-RUN apt-get install -y wget file
 RUN apt-get install -y wget unzip
 RUN apt-get install -y wget zip
 RUN apt-get install -y wget xz-utils
