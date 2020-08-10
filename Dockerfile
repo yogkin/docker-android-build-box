@@ -22,6 +22,8 @@ ENV PATH="$JAVA_HOME/bin:$PATH:$ANDROID_SDK_HOME/emulator:$ANDROID_SDK_HOME/tool
 WORKDIR /tmp
 
 # Installing packages
+RUN apt-get update
+RUN apt-get upgrade
 RUN apt-get install -y wget git curl
 RUN apt-get install -y wget file
 RUN apt-get install -y wget unzip
