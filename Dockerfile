@@ -22,13 +22,13 @@ ENV PATH="$JAVA_HOME/bin:$PATH:$ANDROID_SDK_HOME/emulator:$ANDROID_SDK_HOME/tool
 WORKDIR /tmp
 
 # Installing packages
-RUN apt-get update && apt-get install -y wget git curl
-RUN apt-get update && apt-get install -y wget file
-RUN apt-get update && apt-get install -y wget unzip
-RUN apt-get update && apt-get install -y wget zip
-RUN apt-get update && apt-get install -y wget xz-utils
-RUN apt-get update && apt-get install -y --no-install-recommends openjdk-8-jdk
-RUN apt-get update && apt-get install -y maven ant ruby rbenv make
+RUN apt-get install -y wget git curl
+RUN apt-get install -y wget file
+RUN apt-get install -y wget unzip
+RUN apt-get install -y wget zip
+RUN apt-get install -y wget xz-utils
+RUN apt-get install -y --no-install-recommends openjdk-8-jdk
+RUN apt-get install -y maven ant ruby rbenv make
 
 # Install Android SDK
 RUN echo "sdk tools ${ANDROID_SDK_TOOLS_VERSION}" && \
