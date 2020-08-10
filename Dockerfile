@@ -24,6 +24,7 @@ WORKDIR /tmp
 # Installing packages
 RUN rm -f /etc/apt/sources.list
 ADD sources.list /etc/apt/
+RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 3B4FE6ACC0B21F32
 RUN apt update
 RUN apt upgrade
 RUN apt-get install -y wget git curl
