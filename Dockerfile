@@ -23,26 +23,7 @@ WORKDIR /tmp
 
 # Installing packages
 RUN rm -f /etc/apt/sources.list
-RUN tee /etc/apt/sources.list <<-'EOF'
-# deb cdrom:[Ubuntu 16.04 LTS _Xenial Xerus_ - Release amd64 (20160420.1)]/ xenial main restricted
-RUN deb-src http://archive.ubuntu.com/ubuntu xenial main restricted #Added by software-properties
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted
-RUN deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted multiverse universe #Added by software-properties
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted
-RUN deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted multiverse universe #Added by software-properties
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial universe
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial-updates universe
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial multiverse
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial-updates multiverse
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse
-RUN deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse #Added by software-properties
-RUN deb http://archive.canonical.com/ubuntu xenial partner
-RUN deb-src http://archive.canonical.com/ubuntu xenial partner
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted
-RUN deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted multiverse universe #Added by software-properties && \
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial-security universe
-RUN deb http://mirrors.aliyun.com/ubuntu/ xenial-security multiverse
-RUN EOF
+ADD sources.list /etc/apt/
 RUN apt update
 RUN apt upgrade
 RUN apt-get install -y wget git curl
